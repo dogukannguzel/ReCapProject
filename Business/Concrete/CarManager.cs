@@ -1,6 +1,9 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 
@@ -17,34 +20,48 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
-        public void Add(Car car)
+        public IResult Add(Car car)
         {
-            _carDal.Add(car);
+            if (CarCheck(car))
+            {
+                _carDal.Add(car);
+                return new SuccessResult(Messages.CarAdded);
+            }
+            return new ErrorResult("error");
+
+           
         }
 
-        public void Delete(Car car)
+        public IResult Delete(Car car)
         {
             _carDal.Delete(car);
+            return new SuccessResult(Messages.CarDeleted);
         }
 
-        public List<Car> GetAll()
+        public IDataResult<List<Car>> GetAll()
         {
-            return _carDal.GetAll();
+            return new SuccessDataResult<List<Car>>(Messages.CarsListed, _carDal.GetAll());
         }
 
-        public List<Car> GetCarsByBrandId(int id)
+        public IDataResult<List<CarDetailDto>> GetCarDetailDtos()
         {
-            return _carDal.GetAll(c => c.BrandId == id);
+            return new SuccessDataResult<List<CarDetailDto>>(Messages.CarsListed,_carDal.GetCarDetailDto());
         }
 
-        public List<Car> GetCarsByColorId(int id)
+        public IDataResult<List<Car>> GetCarsByBrandId(int id)
         {
-            return _carDal.GetAll(c => c.ColorId == id);
+            return new SuccessDataResult<List<Car>>(Messages.CarsListed, _carDal.GetAll(c => c.BrandId == id)); 
         }
 
-        public void Uptade(Car car)
+        public IDataResult<List<Car>> GetCarsByColorId(int id)
+        {
+            return   new SuccessDataResult<List<Car>>(Messages.CarsListed, _carDal.GetAll(c => c.ColorId == id));
+        }
+
+        public IResult Uptade(Car car)
         {
             _carDal.Uptade(car);
+            return new SuccessResult(Messages.CarUptaded);
         }
 
 
@@ -52,7 +69,10 @@ namespace Business.Concrete
 
         private bool CarCheck(Car car)
         {
-            if()
+            if (car.Description.Length <= 2 || car.DailyPrice <= 0)
+            {
+                return false;
+            }
 
 
             return true;

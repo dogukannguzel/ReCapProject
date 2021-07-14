@@ -14,7 +14,12 @@ namespace ConsoleUI
 
             CarManager carManager = new CarManager(new EfCarDal());
 
-           
+
+            foreach (var item in carManager.GetCarDetailDtos().Data)
+            {
+                Console.WriteLine(item);
+            }
+
 
         }
     }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.InMemory
 {
-    public class InMemoryCarDal : ICarDal
+    public class InMemoryCarDal 
     {
 
         List<Car> _cars;
@@ -30,11 +30,11 @@ namespace DataAccess.Concrete.InMemory
             _cars.Add(car);
         }
 
-        public void delete(Car car)
-        {
-            var result = _cars.SingleOrDefault(c => c.Id == car.Id);
+     
 
-            _cars.Remove(result);
+        public void Delete(Car entity)
+        {
+            throw new NotImplementedException();
         }
 
         public Car Get(Expression<Func<Car, bool>> filter)
