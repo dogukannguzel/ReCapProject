@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Business.Concrete
 {
-    public class ColorManager : ColorService
+    public class ColorManager : IColorService
     {
 
         IColorDal _colorDal;

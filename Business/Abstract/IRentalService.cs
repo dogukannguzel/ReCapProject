@@ -8,14 +8,11 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-   public interface ColorService
+    public interface IRentalService
     {
-
-        IResult Add(Color color);
-        IResult Delete(Color color);
-        IResult Uptade(Color color);
-
-        IDataResult<List<Color>> GetAll();
-
+        IResult Add(Rental rental);
+        IResult Delete(Rental rental);
+        IResult Uptade(Rental rental);
+        IDataResult<List<Rental>> GetAll();
     }
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
-    public class BrandManager : BrandService
+    public class BrandManager : IBrandService
     {
 
         IBrandDal _brandDal;
