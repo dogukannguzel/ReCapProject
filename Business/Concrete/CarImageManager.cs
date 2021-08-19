@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Business;
 using Core.Utilities.FileHelper;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -6,9 +8,6 @@ using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
@@ -22,41 +21,74 @@ namespace Business.Concrete
         }
 
         public  IResult Add( IFormFile file, CarImage carImage)
-        {   var result = CarImageHelper.Upload(file);
+        {
+            var result = BusinessRules.Run(CarImageLimitExceeded(carImage.CarId));
+            if (!result.Success)
+            {
+                return result;
+            }
+            var upload = CarImageHelper.Upload(file);
             carImage.CreatedDate = DateTime.Now;
-            carImage.ImagePath = result.Message;
+            carImage.ImagePath = upload.Message;
             _carImageDal.Add(carImage);
             return new SuccessResult();
         }
 
         public IResult Delete(CarImage carImage)
         {
-            throw new NotImplementedException();
+            _carImageDal.Delete(carImage);
+            return new  SuccessResult();
         }
 
         public IResult DeleteByCarId(int carId)
         {
-            throw new NotImplementedException();
+            var deleteImage = _carImageDal.Get(c => c.CarId == carId);
+            _carImageDal.Delete(deleteImage);
+            return new SuccessResult();
+
         }
 
         public IDataResult<List<CarImage>> GetAll()
         {
-            throw new NotImplementedException();
+            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll());
         }
 
         public IDataResult<List<CarImage>> GetAllByCarId(int carId)
         {
-            throw new NotImplementedException();
+            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(c => c.CarId == carId));
         }
 
         public IDataResult<CarImage> GetById(int id)
         {
-            throw new NotImplementedException();
+            return new SuccessDataResult<CarImage>(_carImageDal.Get(c => c.CarId == id));
         }
 
         public IResult Update(CarImage carImage, IFormFile file)
         {
-            throw new NotImplementedException();
+            var ımageDelete = _carImageDal.Get(c => c.CarId == carImage.CarId);
+            if (ımageDelete==null)
+            {
+                return new ErrorResult("bulunamadı");
+            }
+
+            var result = CarImageHelper.Update(file, ımageDelete.ImagePath);
+
+            carImage.ImagePath = result.Message;
+            _carImageDal.Uptade(carImage);
+
+
+            return new SuccessResult();
         }
+
+        private IResult CarImageLimitExceeded(int carId)
+        {
+            var result = _carImageDal.GetAll(c=>c.CarId==carId).Count;
+            if (result>=5)
+            {
+                return new ErrorResult(Messages.CarImageLimitExceeded);
+            }
+            return new SuccessResult();
+        }
+
     }
 }

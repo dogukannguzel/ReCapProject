@@ -22,14 +22,70 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public  IActionResult Add( [FromForm(Name ="Image")] IFormFile file,[FromForm] CarImage carImage)
+        public IActionResult Add([FromForm(Name = "Image")] IFormFile file, [FromForm] CarImage carImage)
         {
-            if (file==null)
+            if (file == null)
             {
                 return BadRequest("boşresimgönderemezsin");
             }
 
-            IResult result = _carImageService.Add(file,carImage);
+            IResult result = _carImageService.Add(file, carImage);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+
+        }
+        [HttpPut("uptade")]
+        public IActionResult Uptade([FromForm(Name = "Image")] IFormFile file, [FromForm] CarImage carImage)
+        {
+            if (file == null)
+            {
+                return BadRequest("boşresimgönderemezsin");
+            }
+
+            IResult result = _carImageService.Update(carImage,file);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+
+        }
+        [HttpGet("getall")]
+        public IActionResult GetAll()
+        {
+
+            IResult result = _carImageService.GetAll();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+
+        }
+        [HttpGet("getbyid")]
+        public IActionResult GetById(int id)
+        {
+
+            IResult result = _carImageService.GetById(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+
+        }
+        [HttpGet("getbycarıd")]
+        public IActionResult GetByCarId(int carId)
+        {
+
+            IResult result = _carImageService.GetAllByCarId(carId);
             if (result.Success)
             {
                 return Ok(result);
